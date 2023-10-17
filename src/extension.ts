@@ -5,7 +5,7 @@ import * as yaml from "js-yaml";
 
 const project = ["chikii", "bikii"];
 const i18nDirName = "i18n";
-const langYamlName = "lang.yaml";
+const langYmlName = "lang.yml";
 
 export function activate(context: vscode.ExtensionContext) {
   const hoverProvider = vscode.languages.registerHoverProvider(
@@ -18,21 +18,19 @@ export function activate(context: vscode.ExtensionContext) {
           return null;
         }
 
-        const langYamlPath = findLangYaml(
-          path.resolve(document.fileName, "../")
-        );
-        console.log("---langYamlPath:", langYamlPath);
-        if (!langYamlPath) {
+        const langYmlPath = findLangYml(path.resolve(document.fileName, "../"));
+        console.log("---langYmlPath:", langYmlPath);
+        if (!langYmlPath) {
           return null;
         }
 
-        const langYamlText = await getFileText(langYamlPath);
-        // console.log("---langYamlText:", langYamlText);
-        if (!langYamlText) {
+        const langYmlText = await getFileText(langYmlPath);
+        // console.log("---langYmlText:", langYmlText);
+        if (!langYmlText) {
           return null;
         }
 
-        const langObj = yaml.load(langYamlText) as Record<
+        const langObj = yaml.load(langYmlText) as Record<
           string,
           Record<string, string>
         >;
@@ -61,29 +59,27 @@ export function activate(context: vscode.ExtensionContext) {
         if (!word) {
           return null;
         }
-        const langYamlPath = findLangYaml(
-          path.resolve(document.fileName, "../")
-        );
-        console.log("---langYamlPath:", langYamlPath);
-        if (!langYamlPath) {
+        const langYmlPath = findLangYml(path.resolve(document.fileName, "../"));
+        console.log("---langYmlPath:", langYmlPath);
+        if (!langYmlPath) {
           return null;
         }
 
-        const langYamlContent = await getFileText(langYamlPath);
-        // console.log("---langYamlContent:", langYamlContent);
-        if (!langYamlContent) {
+        const langYmlContent = await getFileText(langYmlPath);
+        // console.log("---langYmlContent:", langYmlContent);
+        if (!langYmlContent) {
           return null;
         }
 
         // 查找目标字符的位置
-        const targetIndex = langYamlContent.indexOf(word);
+        const targetIndex = langYmlContent.indexOf(word);
 
         if (targetIndex === -1) {
           return null;
         }
 
         // 如果找到目标字符，将其位置转换为行和列
-        const lines = langYamlContent.substring(0, targetIndex).split("\n");
+        const lines = langYmlContent.substring(0, targetIndex).split("\n");
         const lineNumber = lines.length;
         const column = lines[lines.length - 1].length;
         console.log("---lineNumber, column:", lineNumber, column);
@@ -91,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
         // 创建 Position 对象
         const p = new vscode.Position(lineNumber - 1, column);
 
-        return new vscode.Location(vscode.Uri.file(langYamlPath), p);
+        return new vscode.Location(vscode.Uri.file(langYmlPath), p);
       },
     }
   );
@@ -141,8 +137,8 @@ function getCorrectSelectedWord(
   return word;
 }
 
-// 找到项目下的 lang.yaml
-function findLangYaml(pathName: string) {
+// 找到项目下的 lang.yml
+function findLangYml(pathName: string) {
   console.log("---pathName", pathName);
 
   const i18nDir = find(pathName);
@@ -151,7 +147,7 @@ function findLangYaml(pathName: string) {
     return null;
   }
 
-  return path.resolve(i18nDir, `./${langYamlName}`);
+  return path.resolve(i18nDir, `./${langYmlName}`);
 
   function find(pathName: string) {
     try {

@@ -2,7 +2,7 @@
   "name": "dy-i18n",
   "displayName": "dy-i18n",
   "description": "快速跳转到国际化文件对应的定义位置",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.7.0"
   },
@@ -15,6 +15,8 @@
     "onLanguage:typescript"
   ],
   "icon": "images/icon.png",
+  "repository": "https://github.com/1301604100/dy-i18n",
+  "publisher": "kary",
   "main": "./dist/extension.js",
   "contributes": {},
   "scripts": {
@@ -45,6 +47,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "argparse": "^2.0.1",
     "js-yaml": "^4.1.0"
   }
 }
