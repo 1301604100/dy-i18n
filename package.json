@@ -1,10 +1,10 @@
 {
   "name": "dy-i18n",
   "displayName": "dy-i18n",
-  "description": "快速跳转到国际化文件对应的定义位置",
-  "version": "0.0.2",
+  "description": "快速跳转到国际化文件对应的定义位置, yml 文件支持表格编辑",
+  "version": "0.1.0",
   "engines": {
-    "vscode": "^1.7.0"
+    "vscode": "^1.70.0"
   },
   "categories": [
     "Other"
@@ -18,7 +18,23 @@
   "repository": "https://github.com/1301604100/dy-i18n",
   "publisher": "kary",
   "main": "./dist/extension.js",
-  "contributes": {},
+  "contributes": {
+    "commands": [
+      {
+        "command": "dy-i18n.toSheet",
+        "title": "to sheet"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "dy-i18n.toSheet",
+          "group": "modification",
+          "when": "resourceExtname == .yml"
+        }
+      ]
+    }
+  },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
     "compile": "webpack",

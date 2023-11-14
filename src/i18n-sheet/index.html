@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sheet</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/css/pluginsCss.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/plugins.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/css/luckysheet.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/assets/iconfont/iconfont.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/plugins/js/plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luckysheet@latest/dist/luckysheet.umd.js"></script>
+
+    <style>
+      .save-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 100px;
+        width: 70px;
+        height: 30px;
+        border-radius: 20px;
+        background: #409eff;
+        z-index: 9;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="save-btn">保存</div>
+    <div
+      id="luckysheet"
+      style="
+        margin: 0px;
+        padding: 0px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+      "
+    ></div>
+
+    <script>
+      window.addEventListener("message", function (event) {
+        switch (event.data.method) {
+          case "init":
+            init(event.data.data);
+            break;
+        }
+      });
+
+      const testData = {
+        "Before Manage Your Chikii Accout,Please Login": {
+          en: "Before Manage Your Chikii Accout,Please Login",
+          pt: "Antes de gerenciar sua conta de Chikii, faça o login",
+          id: "Sebelum mengelola akun Chikii Anda, silakan masuk",
+          vi: "Trước khi quản lý tài khoản Chikii của bạn, vui lòng đăng nhập",
+          th: "ก่อนจัดการบัญชี Chikii ของคุณ โปรดล็อกอิน",
+          vi: "Trước khi quản lý tài khoản Chikii của bạn, vui lòng đăng nhập",
+          zh: "在管理您的Chikii Accout之前，請登入",
+        },
+        hello: {
+          en: "Hello",
+          pt: "Olá",
+          id: "Halo",
+          vi: "Xin chào",
+          th: "สวัสดี",
+          vi: "Xin chào",
+          zh: "你好",
+        },
+        langs: ["en", "pt", "id", "th", "vi", "zh"],
+      };
+
+      init(testData);
+
+      function init(data) {
+        const row = data ? Object.keys(data).length : 0;
+        const col = data ? Object.keys(data["langs"]).length : 0;
+
+        const celldata = setCellData(data);
+
+        const options = {
+          lang: "zh",
+          title: "sheet",
+          row,
+          column: col,
+          data: [
+            {
+              celldata,
+              frozen: {
+                type: "row",
+              },
+              defaultRowHeight: 35,
+              defaultColWidth: 190,
+            },
+          ],
+          container: "luckysheet",
+          hook: {
+            cellUpdated: update,
+            fireMousedown: update,
+            cellDragStop: update,
+          },
+          // 顶部工具栏
+          showinfobar: false,
+          showtoolbarConfig: {
+            undoRedo: true,
+          },
+          showtoolbar: false, // 顶部信息栏
+          showsheetbar: false, // 底部sheet页按钮
+          sheetFormulaBar: false, // 公式栏
+          // 仅显示缩放按钮
+          showstatisticBar: false,
+          showstatisticBarConfig: {
+            zoom: true,
+          },
+          // 右键菜单
+          cellRightClickConfig: {
+            copyAs: false, // 复制为
+            matrix: false, // 矩阵操作选区
+            sort: false, // 排序选区
+            filter: false, // 筛选选区
+            chart: false, // 图表生成
+            image: false, // 插入图片
+            link: false, // 插入链接
+            data: false, // 数据验证
+            cellFormat: false, // 设置单元格格式
+          },
+        };
+
+        luckysheet.create(options);
+      }
+
+      function setCellData(data) {
+        let r = 0; // 行
+        let c = 1; // 列
+        const celldata = [];
+        // 语言头
+        for (const lang of data["langs"]) {
+          celldata.push(cell({ r, c, v: lang, bl: 1 }));
+          c++;
+        }
+        c = 0;
+        r++;
+
+        for (const key of Object.keys(data)) {
+          if (key === "langs") continue;
+          c = 0;
+          // 命名
+          celldata.push(cell({ r, c, v: key, bl: 1 }));
+
+          c++;
+          for (const lang of Object.keys(data[key])) {
+            const val = data[key][lang];
+            celldata.push(cell({ r, c, v: val }));
+            c++;
+          }
+          r++;
+        }
+
+        return celldata;
+
+        function cell({ r, c, v, bl = 0 }) {
+          return {
+            r,
+            c,
+            v: {
+              m: v,
+              v: v,
+              bl,
+              tb: 2,
+            },
+          };
+        }
+      }
+
+      function update() {
+        console.log("cellUpdated");
+      }
+
+      const vscode = acquireVsCodeApi();
+      document.querySelector(".save-btn").addEventListener("click", save);
+
+      function save() {
+        const ymlObj = {};
+        const cellData = luckysheet.getSheetData();
+        console.log(" ~ save ~ cellData:", cellData);
+
+        if (cellData.length === 0) {
+          alert("没有数据");
+          return;
+        }
+
+        for (let i = 0; i < cellData.length; i++) {
+          const data = cellData[i];
+
+          if (i === 0) {
+            ymlObj.langs = data.filter(Boolean).map(({ v }) => v);
+            continue;
+          }
+          // 空行
+          if (data.filter(Boolean).length === 0) continue;
+
+          // 名字
+          const key = data[0] ? data[0].v : `key-${i}`;
+          ymlObj[key] = {};
+          for (let j = 1; j < data.length; j++) {
+            const item = data[j];
+
+            let val = "";
+            let lang = ymlObj.langs[j - 1];
+            if (!item || !item.v) val = "";
+            else val = item.v;
+
+            ymlObj[key][lang] = val;
+          }
+        }
+
+        console.log(" ~ save ~ ymlObj:", ymlObj);
+        vscode.postMessage({
+          data: ymlObj,
+        });
+      }
+    </script>
+  </body>
+</html>
