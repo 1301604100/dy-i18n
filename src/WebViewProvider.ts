@@ -42,7 +42,7 @@ export function getWebviewProvider(context: vscode.ExtensionContext) {
       }
 
       const langObj = await getLangYmlObj(path);
-      // console.log(" ~ langObj:", langObj);
+      console.log(" ~ langObj:", langObj);
 
       currentPanel.webview.postMessage({
         method: "init",
@@ -51,11 +51,6 @@ export function getWebviewProvider(context: vscode.ExtensionContext) {
 
       currentPanel.webview.onDidReceiveMessage(
         (message) => {
-          // const text = yaml.dump(message.data, {
-          //   quotingType: '"',
-          // });
-          // console.log(" ~ text:", text);
-
           const obj = message.data;
           let text = ``;
           if (!obj["langs"]) {
@@ -102,7 +97,7 @@ async function getWebviewContent(context: vscode.ExtensionContext) {
   console.log("--- context.extensionPath:", context.extensionPath);
   const content = await vscode.workspace.fs.readFile(
     vscode.Uri.file(
-      path.join(context.extensionPath, "src/i18n-sheet/index.html")
+      path.join(context.extensionPath, "dist/i18n-sheet/index.html")
     )
   );
   const text = new TextDecoder().decode(content);
