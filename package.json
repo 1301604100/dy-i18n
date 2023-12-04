@@ -2,7 +2,7 @@
   "name": "dy-i18n",
   "displayName": "dy-i18n",
   "description": "支持预览对应的国际化内容、支持快速跳转到国际化文件对应的定义位置、支持快速补全, yml 文件支持表格编辑",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "engines": {
     "vscode": "^1.70.0"
   },

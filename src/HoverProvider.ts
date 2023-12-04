@@ -41,6 +41,7 @@ const hoverProvider = vscode.languages.registerHoverProvider(
         }
       }
       console.log("---resStr:", resStr);
+      resStr = resStr || "还未定义该内容";
       return new vscode.Hover(resStr);
     },
   }
