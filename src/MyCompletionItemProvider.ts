@@ -34,7 +34,19 @@ export default class MyCompletionItemProvider implements vscode.CompletionItemPr
     const completionItems = [];
     for (const key in langObj) {
       if (Object.prototype.hasOwnProperty.call(langObj, key)) {
-        completionItems.push(new vscode.CompletionItem(key, vscode.CompletionItemKind.Value));
+        const item = new vscode.CompletionItem(
+          key,
+          vscode.CompletionItemKind.Value
+        );
+        let str = "";
+        for (const lang in langObj[key]) {
+          if (Object.prototype.hasOwnProperty.call(langObj[key], lang)) {
+            str += `${lang}:  ${langObj[key][lang]}  \n`;
+          }
+        }
+        item.detail = key;
+        item.documentation = str;
+        completionItems.push(item);
       }
     }
     return completionItems;
